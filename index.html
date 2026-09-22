@@ -1,90 +1,237 @@
-<!doctype html><html lang="th"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>เกม “คูณไว-วิ่งไว” ประมาณผลลัพธ์การคูณ ป.4</title>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>เกม “คูณไว-วิ่งไว” | คณิตศาสตร์ ป.4</title>
 <style>
-*{box-sizing:border-box}body{margin:0;overflow:hidden;font-family:Arial,sans-serif;color:#123451;background:linear-gradient(#79def5 0 35%,#9ee16c 35% 100%)}
-.app{height:100vh;padding:9px 14px;display:flex;flex-direction:column;gap:7px}
-.top{height:105px;display:grid;grid-template-columns:1.35fr 1fr 1.8fr;gap:9px}
-.title,.quote,.controls,.team,.side,.box{border-radius:18px;border:4px solid white;box-shadow:0 5px 12px #17466b44}
-.title{background:linear-gradient(#a35e18,#6e3c0d);color:#fff;text-align:center;padding:7px;font-weight:900}
-.title b{font-size:29px;line-height:1}.title span{display:inline-block;background:#fff;color:#16416a;border-radius:15px;padding:3px 18px;margin-top:5px}
-.quote{background:#f8ffff;border-color:#9de8f8;text-align:center;padding:12px;font-size:22px;font-weight:900;color:#193faf}
-.controls{background:#d8f8ff;border-color:#9de8f8;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px}
-.controls strong{font-size:14px}.time{padding:9px 11px;border-radius:12px;border:3px solid #bfd2df;background:#fff;font-weight:900}.time.active{background:#1679d4;color:#fff}
-button{font-family:inherit;cursor:pointer;touch-action:manipulation}.action{color:white;border:0;border-radius:14px;padding:12px 14px;font-weight:900;font-size:16px;box-shadow:0 4px #0003}.start{background:#16a64a}.reset{background:#f39819}.sound{background:#40566b}
-.main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 185px;gap:9px}
-.left{min-width:0;display:flex;flex-direction:column;min-height:0}.teams{height:66px;display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:7px}
-.team{color:#fff;font-size:21px;font-weight:900;line-height:1;border:4px solid #fff;transition:.18s}.team small{display:block;font-size:11px;margin-top:4px}.red{background:#ef3340}.blue{background:#1688e8}.green{background:#18a957}.purple{background:#8d45dc}.orange{background:#e67e22}.team.selected{outline:5px solid #ffe45a;transform:translateY(-3px) scale(1.02)}
-.grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(3,1fr);gap:7px}
-.card{position:relative;border:4px solid #fff;border-radius:15px;background:linear-gradient(145deg,#197bd2,#0755a7);box-shadow:0 5px #073d77,0 8px 13px #17466b55;color:#bceeff;font-size:68px;font-weight:900;display:flex;align-items:center;justify-content:center;transition:.18s;overflow:hidden}
-.card:not(.used):hover,.card.focus{transform:translateY(-6px) scale(1.035);filter:brightness(1.15);box-shadow:0 10px #073d77,0 14px 20px #17466b66}.card:active{transform:scale(.96)}
-.card.used{background:linear-gradient(#fff,#e7f6ff);color:#143c5a;box-shadow:0 4px #7ca8c0;cursor:default}.card.used .q{font-size:clamp(38px,5.5vw,78px);font-weight:900;text-align:center;line-height:1;letter-spacing:-1px;white-space:nowrap;display:flex;align-items:center;justify-content:center;width:100%;height:100%;}.owner{position:absolute;right:6px;bottom:5px;color:#fff;font-size:11px;padding:3px 7px;border-radius:9px}.c1{background:#ef3340}.c2{background:#1688e8}.c3{background:#18a957}.c4{background:#8d45dc}.c5{background:#e67e22}
-.flip{animation:flip .5s}.spark{position:absolute;width:8px;height:8px;border-radius:50%;background:#ffe35b;animation:spark .7s forwards}@keyframes flip{0%{transform:rotateY(0)}45%{transform:rotateY(90deg) scale(1.08)}100%{transform:rotateY(0)}}@keyframes spark{to{opacity:0;transform:translate(var(--x),var(--y)) scale(.2)}}
-.side{background:linear-gradient(#0b3455,#123f63);color:white;padding:10px;display:flex;flex-direction:column;gap:9px}.side h3{text-align:center;margin:0;font-size:17px}.clock{text-align:center;font-size:40px;font-weight:900}.bar{height:10px;background:#315d78;border-radius:10px;overflow:hidden}.bar i{display:block;height:100%;background:#24e875;width:100%;transition:width 1s}.stat{background:#174a70;border:2px solid #4e86a7;border-radius:13px;text-align:center;padding:9px;font-weight:900}.stat b{font-size:26px}.tip{text-align:center;margin-top:auto;line-height:1.35;font-size:15px}.tip strong{color:#ffe45b}
-.bottom{height:67px;display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:7px}.box{padding:4px 8px;text-align:center;color:#fff}.box b{font-size:17px}.count{background:#fff;color:#123451;border-radius:10px;font-size:23px;font-weight:900;padding:2px}
-.modal{display:none;position:fixed;inset:0;background:#052b4699;align-items:center;justify-content:center;z-index:5}.modal.show{display:flex}.modal div{background:#fff;border:5px solid #68c8ef;border-radius:22px;padding:25px;text-align:center;font-size:18px}.modal button{background:#1679d4;color:#fff;border:0;border-radius:12px;padding:10px 24px;font-weight:900}
-@media(max-width:1050px){.title b{font-size:24px}.quote{font-size:18px}.time{padding:7px 8px}.action{padding:9px 10px;font-size:14px}.team{font-size:18px}.card{font-size:58px}.side{width:185px}.bottom{height:62px;grid-template-columns:repeat(5,1fr)}}
-</style></head><body>
-<div class="app">
-<header class="top">
-<div class="title"><b>🎯 เกม “คูณไว-วิ่งไว”<br>ประมาณผลลัพธ์การคูณ</b><br><span>คณิตศาสตร์ ป.4</span></div>
-<div class="quote">“คิดใกล้เคียง<br>อย่างมีเหตุผล” 💡</div>
-<div class="controls"><div><strong>⏱ ตั้งเวลาแข่งขัน</strong><br>
-<button class="time active" data-t="180">3 นาที</button><button class="time" data-t="300">5 นาที</button><button class="time" data-t="0">ไม่จับเวลา</button></div>
-<button id="start" class="action start">▶ เริ่มเกม</button><button id="reset" class="action reset">↻ รีเซ็ต</button><button id="sound" class="action sound">🔊</button></div>
-</header>
-<main class="main"><section class="left">
-<div class="teams"><button class="team red" data-team="1">🐾 กลุ่ม 1<small>แตะเลือกก่อนหยิบการ์ด</small></button><button class="team blue" data-team="2">🐬 กลุ่ม 2<small>แตะเลือกก่อนหยิบการ์ด</small></button><button class="team green" data-team="3">🍃 กลุ่ม 3<small>แตะเลือกก่อนหยิบการ์ด</small></button><button class="team purple" data-team="4">🦋 กลุ่ม 4<small>แตะเลือกก่อนหยิบการ์ด</small></button><button class="team orange" data-team="5">🟠 กลุ่ม 5<small>แตะเลือกก่อนหยิบการ์ด</small></button></div>
-<div id="grid" class="grid"></div>
-<div class="bottom"><div class="box red"><b>🐾 กลุ่ม 1</b><div class="count" id="n1">จำนวนข้อ 0</div></div><div class="box blue"><b>🐬 กลุ่ม 2</b><div class="count" id="n2">จำนวนข้อ 0</div></div><div class="box green"><b>🍃 กลุ่ม 3</b><div class="count" id="n3">จำนวนข้อ 0</div></div><div class="box purple"><b>🦋 กลุ่ม 4</b><div class="count" id="n4">จำนวนข้อ 0</div></div><div class="box orange"><b>🟠 กลุ่ม 5</b><div class="count" id="n5">จำนวนข้อ 0</div></div></div>
-</section>
-<aside class="side"><h3>เวลาที่เหลือ</h3><div id="clock" class="clock">03:00</div><div class="bar"><i id="bar"></i></div><div class="stat">🃏 การ์ดที่หยิบแล้ว<br><b id="picked">0 / 18</b></div><div class="tip">“ประมาณให้ใกล้<br>ใช้ความรู้ให้ถูกต้อง”<br><br>📚 <strong>2 × 3 ≈ 6</strong></div></aside></main></div>
-<div id="modal" class="modal"><div><h2>🔔 หมดเวลา!</h2><p>หยุดหยิบการ์ดและตรวจใบงานของแต่ละกลุ่มได้เลยครับ</p><button onclick="closeModal()">ตกลง</button></div></div>
-<script>
-const qs=["24 × 3","48 × 2","67 × 4","125 × 3","216 × 4","309 × 2","23 × 12","34 × 15","42 × 16","21 × 24","35 × 12","18 × 25","72 × 6","84 × 7","132 × 5","241 × 3","315 × 2","428 × 4"];
-let team=0,playing=false,mode=180,left=180,timer=null,soundOn=true,audio=null,c=[0,0,0,0,0];
-const grid=document.getElementById("grid");
-function audioOn(){if(!audio)audio=new(window.AudioContext||window.webkitAudioContext)();if(audio.state==="suspended")audio.resume()}
-function beep(f=700,d=.08,v=.18){
-  if(!soundOn)return;
-  try{
-    if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-    if(audioCtx.state==="suspended")audioCtx.resume();
-    const now=audioCtx.currentTime;
-    const gain=audioCtx.createGain();
-    const osc=audioCtx.createOscillator();
-    const click=audioCtx.createOscillator();
-    const clickGain=audioCtx.createGain();
-    osc.type="square";
-    osc.frequency.setValueAtTime(f,now);
-    osc.frequency.exponentialRampToValueAtTime(Math.max(120,f*.72),now+d);
-    gain.gain.setValueAtTime(0.0001,now);
-    gain.gain.exponentialRampToValueAtTime(Math.min(v,0.28),now+.008);
-    gain.gain.exponentialRampToValueAtTime(0.0001,now+d);
-    osc.connect(gain).connect(audioCtx.destination);
-    osc.start(now); osc.stop(now+d+.01);
-    click.type="triangle";
-    click.frequency.setValueAtTime(Math.min(2400,f*1.8),now);
-    clickGain.gain.setValueAtTime(0.0001,now);
-    clickGain.gain.exponentialRampToValueAtTime(Math.min(v*.55,0.14),now+.004);
-    clickGain.gain.exponentialRampToValueAtTime(0.0001,now+.045);
-    click.connect(clickGain).connect(audioCtx.destination);
-    click.start(now); click.stop(now+.05);
-  }catch(e){}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:"Trebuchet MS","Arial",sans-serif;background:linear-gradient(#50c9f4 0 28%,#9ee45d 28% 100%);color:#10233b}
+body{overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:
+radial-gradient(circle at 8% 12%,#fff8 0 35px,transparent 36px),
+radial-gradient(circle at 88% 18%,#fff7 0 50px,transparent 51px),
+linear-gradient(transparent 72%,#6ab5d8 72% 75%,transparent 75%);opacity:.55}
+.app{max-width:1500px;margin:auto;padding:10px 14px 16px}
+.top{display:grid;grid-template-columns:1.45fr 1.1fr .9fr;gap:12px;align-items:stretch}
+.title{position:relative;background:linear-gradient(135deg,#9a5b17,#5f3513);border:5px solid #fff;border-radius:22px;padding:10px 18px;box-shadow:0 7px 0 #6d4119;overflow:hidden}
+.title:after{content:"🏁";position:absolute;right:12px;top:4px;font-size:55px}
+.title small{display:block;color:#fff;font-size:23px;font-weight:900}
+.title h1{margin:0;color:#ffd92e;text-shadow:4px 4px #173b78,-2px -2px #fff;font-size:clamp(38px,4.5vw,68px);line-height:.95}
+.ribbon{display:inline-block;background:#f02d2d;color:#fff;border-radius:12px;padding:6px 16px;margin-top:8px;font-size:20px;font-weight:900}
+.motto{background:#fff;border:5px solid #d9f3ff;border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8px;box-shadow:0 6px 0 #62b6cc}
+.motto strong{font-size:clamp(23px,2.4vw,39px);color:#194fa7;line-height:1.05}
+.motto span{background:#ffd51d;border-radius:16px;padding:5px 30px;margin-top:7px;font-size:23px;font-weight:900}
+.tools{display:flex;gap:8px;flex-direction:column}
+.tool{border:0;border-radius:14px;color:#fff;font-size:19px;font-weight:900;padding:9px 12px;cursor:pointer;box-shadow:0 4px 0 #777}
+.sound{background:linear-gradient(#ff4949,#d91414);font-size:22px;min-height:88px}
+.restart{background:#ff7d1b}.full{background:#394b61}
+.teams{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:12px 0}
+.team{border:5px solid #fff;border-radius:22px;color:#fff;min-height:95px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;box-shadow:0 6px 0 #356078;transition:.15s;position:relative}
+.team:hover,.team.selected{transform:translateY(-3px) scale(1.015);filter:brightness(1.08)}
+.team.selected{outline:5px solid #ffe900}
+.team .icon{font-size:45px}.team .name{font-size:26px;font-weight:900}.team .count{background:#183c59dd;border-radius:10px;padding:4px 14px;font-size:30px;font-weight:900}
+.t1{background:#f02e38}.t2{background:#1589ea}.t3{background:#16ae58}.t4{background:#803ce5}.t5{background:#f39a16}
+.boardWrap{background:rgba(55,170,54,.42);padding:5px;border-radius:20px}
+.board{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
+.card{aspect-ratio:1.45;border:5px solid #fff;border-radius:16px;background:linear-gradient(145deg,#1678cf,#0853a8);box-shadow:0 5px 0 #1e6b8d;display:flex;align-items:center;justify-content:center;color:#fff;font-size:64px;font-weight:900;cursor:pointer;position:relative;transition:.18s;overflow:hidden}
+.card:hover{transform:translateY(-5px) scale(1.025);filter:brightness(1.12)}
+.card .qmark{font-size:70px;color:#dff6ff;text-shadow:2px 3px #3a6e9d}
+.card.open{background:#fff;color:#0c1727;border-color:#ffdc25;cursor:default;box-shadow:0 5px 0 #c8a800}
+.card.open .question{font-size:clamp(27px,3.7vw,55px);white-space:nowrap;line-height:1;font-weight:1000;letter-spacing:-1px}
+.card .owner{position:absolute;right:6px;bottom:5px;border-radius:9px;padding:3px 8px;color:#fff;font-size:13px;font-weight:900}
+.badge{position:absolute;left:7px;top:5px;background:#536f86;color:#fff;border-radius:50%;width:31px;height:31px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.bottom{display:grid;grid-template-columns:1fr 1fr 1fr 1.5fr;gap:10px;margin-top:12px;align-items:stretch}
+.modebox{background:#fff;border:4px solid #fff;border-radius:20px;padding:7px;display:flex;gap:7px;align-items:center;justify-content:center;box-shadow:0 5px 0 #7d9ba9}
+.mode{border:0;border-radius:13px;padding:10px 18px;font-size:20px;font-weight:900;cursor:pointer}
+.m3{background:#35ce45;color:#fff}.m5{background:#28a7ff;color:#fff}.m0{background:#ef5a91;color:#fff}.mode.active{outline:4px solid #ffe900}
+.start{border:0;border-radius:22px;background:linear-gradient(#ff4c28,#f31e16);color:#fff;font-size:32px;font-weight:1000;box-shadow:0 7px 0 #a92016;cursor:pointer}
+.timerBox{position:fixed;right:22px;top:185px;background:#0e1724;color:#fff;border:8px solid #f5bd18;border-radius:25px;padding:10px 18px;z-index:5;text-align:center;box-shadow:0 7px 0 #9b7310;min-width:170px}
+.timerLabel{font-size:15px;font-weight:900;color:#ffd92e}.timer{font-family:monospace;font-size:45px;font-weight:1000}
+.timer.urgent{color:#ff4b36;animation:pulse .35s infinite alternate}
+@keyframes pulse{to{transform:scale(1.08)}}
+.overlay{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;z-index:20}
+.modal{background:#fff;border:7px solid #ffca18;border-radius:25px;padding:28px;text-align:center;min-width:310px;box-shadow:0 10px 0 #7e6214}
+.modal h2{font-size:45px;margin:0 0 12px;color:#e32323}.modal button{background:#1689e8;border:0;color:#fff;border-radius:12px;padding:12px 28px;font-size:22px;font-weight:900}
+@media(max-width:900px){
+ .top{grid-template-columns:1fr}.timerBox{position:static;margin:8px auto;width:max-content}.tools{flex-direction:row}.teams{grid-template-columns:repeat(5,1fr)}.team{min-height:70px}.team .icon{font-size:28px}.team .name{font-size:17px}.team .count{font-size:22px;padding:2px 8px}.card{font-size:50px}.card.open .question{font-size:clamp(20px,4.8vw,40px)}.bottom{grid-template-columns:1fr}.start{min-height:65px}
 }
-function bell(){[880,1175,1568].forEach((f,i)=>setTimeout(()=>beep(f,.45,.16),i*100))}
-function sparks(el){for(let i=0;i<12;i++){let s=document.createElement("i");s.className="spark";s.style.left="50%";s.style.top="50%";s.style.setProperty("--x",(Math.random()*140-70)+"px");s.style.setProperty("--y",(Math.random()*110-55)+"px");el.appendChild(s);setTimeout(()=>s.remove(),750)}}
-function fmt(x){return String(Math.floor(x/60)).padStart(2,"0")+":"+String(x%60).padStart(2,"0")}
-function update(){document.getElementById("clock").textContent=mode?fmt(left):"∞";document.getElementById("bar").style.width=(mode?left/mode*100:100)+"%";document.getElementById("bar").style.background=left<=10&&mode?"#ff4d5e":"#24e875"}
-function selectTeam(n){team=n;document.querySelectorAll(".team").forEach(x=>x.classList.toggle("selected",+x.dataset.team===n));beep(520,.06,.06)}
-document.querySelectorAll(".team").forEach(x=>x.onclick=()=>selectTeam(+x.dataset.team));
-function build(){grid.innerHTML="";qs.forEach(q=>{let b=document.createElement("button");b.className="card";b.innerHTML='<span class="q">?</span>';b.onmouseenter=()=>!b.classList.contains("used")&&beep(420,.035,.035);b.onfocus=()=>b.classList.add("focus");b.onblur=()=>b.classList.remove("focus");b.onclick=()=>pick(b,q);grid.appendChild(b)})}
-function pick(b,q){if(!playing)return;if(!team){alert("กรุณาเลือกกลุ่มก่อนหยิบการ์ดครับ");return}if(b.classList.contains("used"))return;audioOn();b.classList.add("flip");beep(980,.09,.085);setTimeout(()=>beep(1320,.13,.085),90);sparks(b);b.classList.add("used");b.innerHTML='<span class="q">'+q+'</span><span class="owner c'+team+'">กลุ่ม '+team+'</span>';c[team-1]++;document.getElementById("n"+team).textContent="จำนวนข้อ "+c[team-1];document.getElementById("picked").textContent=c.reduce((a,b)=>a+b,0)+" / 18";team=0;document.querySelectorAll(".team").forEach(x=>x.classList.remove("selected"));if(c.reduce((a,b)=>a+b,0)===18)finish()}
-function start(){if(playing)return;audioOn();playing=true;document.getElementById("start").textContent="⏸ กำลังเล่น";if(mode){left=mode;update();beep(880,.08,.07);clearInterval(timer);timer=setInterval(()=>{left--;update();if(left>0)beep(left<=10?1320:980,.085,left<=10?.22:.14);if(left<=0)finish()},1000)}}
-function finish(){if(!playing)return;playing=false;clearInterval(timer);timer=null;document.getElementById("start").textContent="▶ เริ่มเกม";grid.querySelectorAll(".card:not(.used)").forEach(x=>x.disabled=true);if(mode){left=0;update();bell();document.getElementById("modal").classList.add("show")}}
-function closeModal(){document.getElementById("modal").classList.remove("show")}
-function reset(){clearInterval(timer);timer=null;playing=false;team=0;c=[0,0,0,0,0];left=mode||0;document.getElementById("start").textContent="▶ เริ่มเกม";document.querySelectorAll(".team").forEach(x=>x.classList.remove("selected"));[1,2,3,4,5].forEach(i=>document.getElementById("n"+i).textContent="จำนวนข้อ 0");document.getElementById("picked").textContent="0 / 18";build();update()}
-document.querySelectorAll(".time").forEach(x=>x.onclick=()=>{if(playing)return;document.querySelectorAll(".time").forEach(y=>y.classList.remove("active"));x.classList.add("active");mode=+x.dataset.t;left=mode;update()});
-document.getElementById("start").onclick=start;document.getElementById("reset").onclick=reset;document.getElementById("sound").onclick=()=>{soundOn=!soundOn;document.getElementById("sound").textContent=soundOn?"🔊":"🔇";if(soundOn)beep(700,.12,.09)};
-build();update();
-</script></body></html>
+@media(max-width:600px){
+ .board{gap:4px}.card{border-width:3px}.card .badge{width:23px;height:23px;font-size:12px;left:3px;top:3px}.card .owner{font-size:9px;right:3px;bottom:3px}.teams{gap:4px}.team{border-width:3px;min-height:58px}.team .icon{display:none}.team .name{font-size:13px}.team .count{font-size:16px;padding:1px 5px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <section class="top">
+    <div class="title"><small>เกม</small><h1>คูณไว-วิ่งไว</h1><div class="ribbon">คิดไว ตอบถูก คว้าชัยชนะ</div></div>
+    <div class="motto"><strong>“คิดใกล้เคียง<br>อย่างมีเหตุผล” 💡</strong><span>ระดับชั้น ป.4</span></div>
+    <div class="tools">
+      <button class="tool sound" id="soundBtn">🔊 เสียงดังมาก!<br><small>เปิดลำโพงให้ดังที่สุด</small></button>
+      <button class="tool restart" id="resetBtn">↻ เริ่มใหม่</button>
+      <button class="tool full" id="fullBtn">⛶ เต็มจอ</button>
+    </div>
+  </section>
+
+  <div class="timerBox"><div class="timerLabel">เวลาที่เหลือ</div><div class="timer" id="timer">05:00</div></div>
+
+  <section class="teams" id="teams">
+    <button class="team t1" data-team="1"><span class="icon">🐯</span><span class="name">กลุ่ม 1</span><span class="count" id="count1">0</span></button>
+    <button class="team t2" data-team="2"><span class="icon">🦈</span><span class="name">กลุ่ม 2</span><span class="count" id="count2">0</span></button>
+    <button class="team t3" data-team="3"><span class="icon">🐉</span><span class="name">กลุ่ม 3</span><span class="count" id="count3">0</span></button>
+    <button class="team t4" data-team="4"><span class="icon">🔥</span><span class="name">กลุ่ม 4</span><span class="count" id="count4">0</span></button>
+    <button class="team t5" data-team="5"><span class="icon">🦁</span><span class="name">กลุ่ม 5</span><span class="count" id="count5">0</span></button>
+  </section>
+
+  <section class="boardWrap"><div class="board" id="board"></div></section>
+
+  <section class="bottom">
+    <div class="modebox">
+      <button class="mode m3" data-min="3">3 นาที</button>
+      <button class="mode m5 active" data-min="5">5 นาที</button>
+      <button class="mode m0" data-min="0">∞ ไม่จับเวลา</button>
+    </div>
+    <button class="start" id="startBtn">▶ เริ่มเกม</button>
+  </section>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2>🔔 หมดเวลา!</h2>
+    <p id="resultText">หยุดเล่นและส่งใบกิจกรรมให้ครูตรวจได้เลย</p>
+    <button id="closeModal">ตกลง</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = ['24 × 6', '37 × 8', '24 × 13', '46 × 7', '32 × 15', '58 × 9', '47 × 12', '73 × 6', '25 × 16', '62 × 8', '34 × 21', '89 × 4', '42 × 18', '75 × 9', '56 × 14', '93 × 6', '27 × 24', '64 × 5'];
+const teamNames={1:"กลุ่ม 1",2:"กลุ่ม 2",3:"กลุ่ม 3",4:"กลุ่ม 4",5:"กลุ่ม 5"};
+const teamColors={1:"#f02e38",2:"#1589ea",3:"#16ae58",4:"#803ce5",5:"#f39a16"};
+let selectedTeam=0, playing=false, time=300, timerId=null, mode=5;
+let counts={1:0,2:0,3:0,4:0,5:0};
+let soundOn=true, audioCtx=null;
+
+function audioReady(){
+  if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==="suspended") audioCtx.resume();
+}
+function tone(freq,dur=0.1,gain=.18,type="square"){
+  if(!soundOn)return;
+  audioReady();
+  const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+  o.type=type;o.frequency.setValueAtTime(freq,audioCtx.currentTime);
+  g.gain.setValueAtTime(.0001,audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(Math.min(gain,.32),audioCtx.currentTime+.008);
+  g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+dur);
+  o.connect(g).connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+dur+.02);
+}
+function tickSound(urgent=false){
+  tone(urgent?1450:980,.075,urgent?.25:.16,"square");
+  setTimeout(()=>tone(urgent?1050:720,.045,urgent?.14:.09,"triangle"),65);
+}
+function startSound(){
+  [660,880,1100,1320].forEach((f,i)=>setTimeout(()=>tone(f,.16,.22,"square"),i*90));
+}
+function endSound(){
+  [1100,850,650,420].forEach((f,i)=>setTimeout(()=>tone(f,.22,.28,"sawtooth"),i*130));
+}
+function pickSound(){
+  tone(1150,.09,.18,"triangle");
+  setTimeout(()=>tone(1650,.13,.16,"square"),70);
+}
+
+const board=document.getElementById("board");
+function buildBoard(){
+  board.innerHTML="";
+  QUESTIONS.forEach((q,i)=>{
+    const c=document.createElement("button");
+    c.className="card"; c.dataset.index=i;
+    c.innerHTML='<span class="badge">'+(i+1)+'</span><span class="qmark">?</span>';
+    c.onclick=()=>pickCard(c,q,i);
+    board.appendChild(c);
+  });
+}
+function pickCard(card,q,i){
+  if(!playing || selectedTeam===0 || card.classList.contains("open")) return;
+  card.classList.add("open");
+  card.innerHTML='<span class="badge">'+(i+1)+'</span><span class="question">'+q+'</span><span class="owner" style="background:'+teamColors[selectedTeam]+'">'+teamNames[selectedTeam]+'</span>';
+  counts[selectedTeam]++;
+  document.getElementById("count"+selectedTeam).textContent=counts[selectedTeam];
+  pickSound();
+  selectedTeam=0;
+  document.querySelectorAll(".team").forEach(x=>x.classList.remove("selected"));
+  if([...document.querySelectorAll(".card")].every(x=>x.classList.contains("open"))) finishGame(false);
+}
+document.querySelectorAll(".team").forEach(btn=>{
+  btn.onclick=()=>{
+    if(!playing)return;
+    selectedTeam=Number(btn.dataset.team);
+    document.querySelectorAll(".team").forEach(x=>x.classList.remove("selected"));
+    btn.classList.add("selected");
+    tone(520,.08,.13,"triangle");
+  };
+});
+document.querySelectorAll(".mode").forEach(btn=>{
+  btn.onclick=()=>{
+    if(playing)return;
+    document.querySelectorAll(".mode").forEach(x=>x.classList.remove("active"));
+    btn.classList.add("active");
+    mode=Number(btn.dataset.min);
+    time=mode*60; updateTimer();
+  };
+});
+function updateTimer(){
+  if(mode===0){document.getElementById("timer").textContent="∞";return}
+  const m=String(Math.floor(time/60)).padStart(2,"0");
+  const s=String(time%60).padStart(2,"0");
+  const el=document.getElementById("timer");el.textContent=m+":"+s;
+  el.classList.toggle("urgent",time<=10);
+}
+function startGame(){
+  if(playing)return;
+  audioReady(); startSound();
+  playing=true; selectedTeam=0;
+  document.getElementById("startBtn").textContent="▶ กำลังเล่น...";
+  if(mode===0){updateTimer();return}
+  clearInterval(timerId);
+  timerId=setInterval(()=>{
+    time--; updateTimer();
+    if(time>0) tickSound(time<=10);
+    if(time<=0) finishGame(true);
+  },1000);
+}
+function finishGame(timeout){
+  playing=false;clearInterval(timerId);selectedTeam=0;
+  document.querySelectorAll(".team").forEach(x=>x.classList.remove("selected"));
+  document.getElementById("startBtn").textContent="▶ เริ่มเกม";
+  if(timeout){
+    document.querySelectorAll(".card:not(.open)").forEach(c=>c.disabled=true);
+    endSound();
+    document.getElementById("resultText").textContent="หมดเวลาแล้วครับ! ตรวจใบกิจกรรมและนับจำนวนข้อของแต่ละกลุ่มได้เลย";
+    document.getElementById("overlay").style.display="flex";
+  }
+}
+function resetGame(){
+  clearInterval(timerId);playing=false;selectedTeam=0;counts={1:0,2:0,3:0,4:0,5:0};
+  for(let i=1;i<=5;i++)document.getElementById("count"+i).textContent="0";
+  time=mode*60;updateTimer();buildBoard();
+  document.getElementById("startBtn").textContent="▶ เริ่มเกม";
+  document.getElementById("overlay").style.display="none";
+  document.querySelectorAll(".team").forEach(x=>x.classList.remove("selected"));
+}
+document.getElementById("startBtn").onclick=startGame;
+document.getElementById("resetBtn").onclick=resetGame;
+document.getElementById("closeModal").onclick=()=>document.getElementById("overlay").style.display="none";
+document.getElementById("soundBtn").onclick=()=>{
+  soundOn=!soundOn;
+  document.getElementById("soundBtn").innerHTML=soundOn?'🔊 เสียงดังมาก!<br><small>เปิดลำโพงให้ดังที่สุด</small>':'🔇 ปิดเสียง';
+  if(soundOn){audioReady();tone(900,.15,.2,"square")}
+};
+document.getElementById("fullBtn").onclick=()=>{
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+  else document.exitFullscreen?.();
+};
+buildBoard();updateTimer();
+</script>
+</body>
+</html>
