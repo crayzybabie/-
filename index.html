@@ -18,7 +18,7 @@ button{font-family:inherit;cursor:pointer;touch-action:manipulation}.action{colo
 .grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(3,1fr);gap:7px}
 .card{position:relative;border:4px solid #fff;border-radius:15px;background:linear-gradient(145deg,#197bd2,#0755a7);box-shadow:0 5px #073d77,0 8px 13px #17466b55;color:#bceeff;font-size:68px;font-weight:900;display:flex;align-items:center;justify-content:center;transition:.18s;overflow:hidden}
 .card:not(.used):hover,.card.focus{transform:translateY(-6px) scale(1.035);filter:brightness(1.15);box-shadow:0 10px #073d77,0 14px 20px #17466b66}.card:active{transform:scale(.96)}
-.card.used{background:linear-gradient(#fff,#e7f6ff);color:#143c5a;box-shadow:0 4px #7ca8c0;cursor:default}.card.used .q{font-size:30px;text-align:center;line-height:1.15}.owner{position:absolute;right:6px;bottom:5px;color:#fff;font-size:11px;padding:3px 7px;border-radius:9px}.c1{background:#ef3340}.c2{background:#1688e8}.c3{background:#18a957}.c4{background:#8d45dc}.c5{background:#e67e22}
+.card.used{background:linear-gradient(#fff,#e7f6ff);color:#143c5a;box-shadow:0 4px #7ca8c0;cursor:default}.card.used .q{font-size:clamp(38px,5.5vw,78px);font-weight:900;text-align:center;line-height:1;letter-spacing:-1px;white-space:nowrap;display:flex;align-items:center;justify-content:center;width:100%;height:100%;}.owner{position:absolute;right:6px;bottom:5px;color:#fff;font-size:11px;padding:3px 7px;border-radius:9px}.c1{background:#ef3340}.c2{background:#1688e8}.c3{background:#18a957}.c4{background:#8d45dc}.c5{background:#e67e22}
 .flip{animation:flip .5s}.spark{position:absolute;width:8px;height:8px;border-radius:50%;background:#ffe35b;animation:spark .7s forwards}@keyframes flip{0%{transform:rotateY(0)}45%{transform:rotateY(90deg) scale(1.08)}100%{transform:rotateY(0)}}@keyframes spark{to{opacity:0;transform:translate(var(--x),var(--y)) scale(.2)}}
 .side{background:linear-gradient(#0b3455,#123f63);color:white;padding:10px;display:flex;flex-direction:column;gap:9px}.side h3{text-align:center;margin:0;font-size:17px}.clock{text-align:center;font-size:40px;font-weight:900}.bar{height:10px;background:#315d78;border-radius:10px;overflow:hidden}.bar i{display:block;height:100%;background:#24e875;width:100%;transition:width 1s}.stat{background:#174a70;border:2px solid #4e86a7;border-radius:13px;text-align:center;padding:9px;font-weight:900}.stat b{font-size:26px}.tip{text-align:center;margin-top:auto;line-height:1.35;font-size:15px}.tip strong{color:#ffe45b}
 .bottom{height:67px;display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:7px}.box{padding:4px 8px;text-align:center;color:#fff}.box b{font-size:17px}.count{background:#fff;color:#123451;border-radius:10px;font-size:23px;font-weight:900;padding:2px}
@@ -45,7 +45,33 @@ const qs=["24 × 3","48 × 2","67 × 4","125 × 3","216 × 4","309 × 2","23 × 
 let team=0,playing=false,mode=180,left=180,timer=null,soundOn=true,audio=null,c=[0,0,0,0,0];
 const grid=document.getElementById("grid");
 function audioOn(){if(!audio)audio=new(window.AudioContext||window.webkitAudioContext)();if(audio.state==="suspended")audio.resume()}
-function beep(f=700,d=.08,v=.085){if(!soundOn)return;audioOn();let o=audio.createOscillator(),g=audio.createGain();o.frequency.value=f;o.type="sine";g.gain.value=v;g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+d);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+d)}
+function beep(f=700,d=.08,v=.18){
+  if(!soundOn)return;
+  try{
+    if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==="suspended")audioCtx.resume();
+    const now=audioCtx.currentTime;
+    const gain=audioCtx.createGain();
+    const osc=audioCtx.createOscillator();
+    const click=audioCtx.createOscillator();
+    const clickGain=audioCtx.createGain();
+    osc.type="square";
+    osc.frequency.setValueAtTime(f,now);
+    osc.frequency.exponentialRampToValueAtTime(Math.max(120,f*.72),now+d);
+    gain.gain.setValueAtTime(0.0001,now);
+    gain.gain.exponentialRampToValueAtTime(Math.min(v,0.28),now+.008);
+    gain.gain.exponentialRampToValueAtTime(0.0001,now+d);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(now); osc.stop(now+d+.01);
+    click.type="triangle";
+    click.frequency.setValueAtTime(Math.min(2400,f*1.8),now);
+    clickGain.gain.setValueAtTime(0.0001,now);
+    clickGain.gain.exponentialRampToValueAtTime(Math.min(v*.55,0.14),now+.004);
+    clickGain.gain.exponentialRampToValueAtTime(0.0001,now+.045);
+    click.connect(clickGain).connect(audioCtx.destination);
+    click.start(now); click.stop(now+.05);
+  }catch(e){}
+}
 function bell(){[880,1175,1568].forEach((f,i)=>setTimeout(()=>beep(f,.45,.16),i*100))}
 function sparks(el){for(let i=0;i<12;i++){let s=document.createElement("i");s.className="spark";s.style.left="50%";s.style.top="50%";s.style.setProperty("--x",(Math.random()*140-70)+"px");s.style.setProperty("--y",(Math.random()*110-55)+"px");el.appendChild(s);setTimeout(()=>s.remove(),750)}}
 function fmt(x){return String(Math.floor(x/60)).padStart(2,"0")+":"+String(x%60).padStart(2,"0")}
@@ -54,7 +80,7 @@ function selectTeam(n){team=n;document.querySelectorAll(".team").forEach(x=>x.cl
 document.querySelectorAll(".team").forEach(x=>x.onclick=()=>selectTeam(+x.dataset.team));
 function build(){grid.innerHTML="";qs.forEach(q=>{let b=document.createElement("button");b.className="card";b.innerHTML='<span class="q">?</span>';b.onmouseenter=()=>!b.classList.contains("used")&&beep(420,.035,.035);b.onfocus=()=>b.classList.add("focus");b.onblur=()=>b.classList.remove("focus");b.onclick=()=>pick(b,q);grid.appendChild(b)})}
 function pick(b,q){if(!playing)return;if(!team){alert("กรุณาเลือกกลุ่มก่อนหยิบการ์ดครับ");return}if(b.classList.contains("used"))return;audioOn();b.classList.add("flip");beep(980,.09,.085);setTimeout(()=>beep(1320,.13,.085),90);sparks(b);b.classList.add("used");b.innerHTML='<span class="q">'+q+'</span><span class="owner c'+team+'">กลุ่ม '+team+'</span>';c[team-1]++;document.getElementById("n"+team).textContent="จำนวนข้อ "+c[team-1];document.getElementById("picked").textContent=c.reduce((a,b)=>a+b,0)+" / 18";team=0;document.querySelectorAll(".team").forEach(x=>x.classList.remove("selected"));if(c.reduce((a,b)=>a+b,0)===18)finish()}
-function start(){if(playing)return;audioOn();playing=true;document.getElementById("start").textContent="⏸ กำลังเล่น";if(mode){left=mode;update();beep(880,.08,.07);clearInterval(timer);timer=setInterval(()=>{left--;update();if(left>0)beep(left<=10?1040:880,.07,left<=10?.12:.065);if(left<=0)finish()},1000)}}
+function start(){if(playing)return;audioOn();playing=true;document.getElementById("start").textContent="⏸ กำลังเล่น";if(mode){left=mode;update();beep(880,.08,.07);clearInterval(timer);timer=setInterval(()=>{left--;update();if(left>0)beep(left<=10?1320:980,.085,left<=10?.22:.14);if(left<=0)finish()},1000)}}
 function finish(){if(!playing)return;playing=false;clearInterval(timer);timer=null;document.getElementById("start").textContent="▶ เริ่มเกม";grid.querySelectorAll(".card:not(.used)").forEach(x=>x.disabled=true);if(mode){left=0;update();bell();document.getElementById("modal").classList.add("show")}}
 function closeModal(){document.getElementById("modal").classList.remove("show")}
 function reset(){clearInterval(timer);timer=null;playing=false;team=0;c=[0,0,0,0,0];left=mode||0;document.getElementById("start").textContent="▶ เริ่มเกม";document.querySelectorAll(".team").forEach(x=>x.classList.remove("selected"));[1,2,3,4,5].forEach(i=>document.getElementById("n"+i).textContent="จำนวนข้อ 0");document.getElementById("picked").textContent="0 / 18";build();update()}
